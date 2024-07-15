@@ -1,23 +1,12 @@
 steps:
 
-- name: gcr.io/cloud-builders/git
-  args: ["fetch", "--unshallow"]
-
-- name: gcr.io/cloud-builders/git
-  entrypoint: /bin/bash
-  args: 
-    - -c
-    - |-
-      echo "Building - $_REGION/$_PROJECT/$_REPO/$_ENV/$_NAME:$(git log --pretty=format:%h | cat -n | tail -n1 | awk '{print $1}')"
-      echo "$(git log --pretty=format:%h | cat -n | tail -n1 | awk '{print $1}')" > IMAGE_TAG 
-
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: bash
   args:
     - -c
     - |-
       docker build \
-        --tag $_REGION/$_PROJECT/$_REPO/$_ENV/$_NAME:$(cat IMAGE_TAG) \
+        --tag $_REGION/$_PROJECT/$_REPO/$_NAME:latest \
         .
 
 - name: 'gcr.io/cloud-builders/docker'
@@ -25,7 +14,7 @@ steps:
   args:
     - -c
     - |-
-      docker push $_REGION/$_PROJECT/$_REPO/$_ENV/$_NAME:$(cat IMAGE_TAG)
+      docker push $_REGION/$_PROJECT/$_REPO/$_NAME:latest
 
 substitutions:
     _REGION: asia-northeast1-docker.pkg.dev
