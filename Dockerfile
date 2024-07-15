@@ -1,35 +1,21 @@
-# Use a slim Node.js image with Alpine Linux
-FROM node:18-alpine AS builder
+FROM node as vite-app
 
-# Set working directory
-WORKDIR /app
+WORKDIR /app/client
+COPY ./client .
 
-# Copy package.json
-COPY package*.json ./
+RUN ["npm", "i"]
+RUN ["npm", "run", "build"]
 
-# Install dependencies
-RUN npm ci
-
-# Copy the entire project directory (excluding package-lock.json)
-COPY . .
-
-# Build for production (adjust command if needed)
-RUN npm run build
-
-# Switch to a smaller runtime image without Node.js and NPM
 FROM nginx:alpine
 
-# Set working directory
-# WORKDIR /app
+WORKDIR /usr/share/nginx/
 
-# Copy only the production-ready build files
-COPY --from=builder /app/dist /usr/share/nginx/html
+RUN rm -rf html
+RUN mkdir html
 
-# Expose the default web server port (can be overridden)
-EXPOSE 8080
+WORKDIR /
 
-# Configure Nginx to serve static content
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx.conf /etc/nginx
+COPY --from=vite-app ./app/client/dist /usr/share/nginx/html
 
-# Start Nginx
-# CMD [ "nginx", "-g", "daemon off;" ]
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
