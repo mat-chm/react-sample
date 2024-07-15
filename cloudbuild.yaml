@@ -17,6 +17,11 @@ steps:
     - |-
       docker push $_REGION/$_PROJECT/$_REPO/$_NAME:latest
 
+images:
+- "$_REGION/$_PROJECT/$_REPO/$_NAME:$COMMIT_SHA"
+- "$_REGION/$_PROJECT/$_REPO/$_NAME:latest"
+
+
 substitutions:
     _REGION: asia-northeast1-docker.pkg.dev
     _PROJECT: endava-secure-healthcare-data
