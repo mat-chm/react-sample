@@ -20,16 +20,16 @@ RUN npm run build
 FROM nginx:alpine
 
 # Set working directory
-WORKDIR /app
+# WORKDIR /app
 
 # Copy only the production-ready build files
-COPY --from=builder /app/dist .
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # Expose the default web server port (can be overridden)
 EXPOSE 8080
 
 # Configure Nginx to serve static content
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Start Nginx
-CMD [ "nginx", "-g", "daemon off;" ]
+# CMD [ "nginx", "-g", "daemon off;" ]
