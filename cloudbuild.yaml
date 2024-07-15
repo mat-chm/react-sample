@@ -6,6 +6,7 @@ steps:
     - -c
     - |-
       docker build \
+        --tag $_REGION/$_PROJECT/$_REPO/$_NAME:$COMMIT_SHA \
         --tag $_REGION/$_PROJECT/$_REPO/$_NAME:latest \
         .
 
