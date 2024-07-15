@@ -3,8 +3,8 @@ FROM node as vite-app
 WORKDIR /app/client
 COPY . .
 
-RUN ["npm", "i"]
-RUN ["npm", "run", "build"]
+RUN npm ci
+RUN npm run build
 
 FROM nginx:alpine
 
