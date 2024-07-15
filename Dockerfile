@@ -1,23 +1,35 @@
-# Build stage
-FROM node:18 AS build
+# Use a slim Node.js image with Alpine Linux
+FROM node:18-alpine AS builder
 
+# Set working directory
 WORKDIR /app
 
+# Copy package.json
 COPY package*.json ./
-RUN npm ci
 
+# Install dependencies
+RUN npm install --production
+
+# Copy the entire project directory (excluding package-lock.json)
 COPY . .
+
+# Build for production (adjust command if needed)
 RUN npm run build
 
-# Production stage
-FROM gcr.io/distroless/nodejs18-debian11
+# Switch to a smaller runtime image without Node.js and NPM
+FROM nginx:alpine
 
+# Set working directory
 WORKDIR /app
 
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./package.json
+# Copy only the production-ready build files
+COPY --from=builder /app/dist .
 
+# Expose the default web server port (can be overridden)
 EXPOSE 8080
 
-CMD ["./node_modules/vite/bin/vite.js", "preview"]
+# Configure Nginx to serve static content
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Start Nginx
+CMD [ "nginx", "-g", "daemon off;" ]
