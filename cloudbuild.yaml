@@ -32,3 +32,6 @@ substitutions:
     _PROJECT: endava-secure-healthcare-data
     _REPO: docker-repository
     _NAME: frontend
+
+options:
+  defaultLogsBucketBehavior: REGIONAL_USER_OWNED_BUCKET
